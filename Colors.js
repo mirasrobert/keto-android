@@ -6,6 +6,7 @@ const pallete = {
   orange: '#FF633B',
   dark: '#1A2C3F',
   light: '#EDF2F7',
+  semiWhite: '#fafafa',
 };
 
 const colors = {
@@ -19,6 +20,7 @@ const colors = {
   orange: pallete.orange,
   white: '#FFFFFF',
   black: '#000000',
+  bright: pallete.semiWhite,
 };
 
 export default colors;

@@ -31,7 +31,7 @@ const LoginScreen = () => {
         </View>
         <Button
           onPress={() => {
-            navigation.navigate('Chart');
+            navigation.navigate('Tabs');
           }}
           mode="contained"
           style={styles.mdRounded}
