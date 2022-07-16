@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import colors from '../../../Colors';
 import {
   StyleSheet,
@@ -7,15 +7,28 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
-  Picker,
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Badge from '../../elements/Badge';
+import {Card, Paragraph, Menu} from 'react-native-paper';
+import DropDownPicker from 'react-native-dropdown-picker';
 
-import {Card, Paragraph} from 'react-native-paper';
+import Badge from '../../elements/Badge';
 
 const BloodSugarScreen = () => {
   const bloodSugar = [1, 2, 3, 4, 5, 6];
+
+  // Menu
+  const [visible, setVisible] = useState(false);
+  const openMenu = () => setVisible(true);
+  const closeMenu = () => setVisible(false);
+
+  // Dropdown Select
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState('All');
+  const [items, setItems] = useState([
+    {label: 'All', value: 'All'},
+    {label: 'Today', value: 'Today'},
+  ]);
 
   return (
     <View style={styles.wrapper}>
@@ -24,15 +37,31 @@ const BloodSugarScreen = () => {
           <Text style={styles.title}>Blood Sugar</Text>
         </View>
         <View>
-          <MaterialCommunityIcons
-            onPress={() => {
-              alert('Icon Pressed');
-            }}
-            style={styles.icon}
-            name="dots-vertical"
-            size={30}
-            color={colors.dark}
-          />
+          <Menu
+            visible={visible}
+            onDismiss={closeMenu}
+            anchor={
+              <MaterialCommunityIcons
+                onPress={openMenu}
+                style={styles.icon}
+                name="dots-vertical"
+                size={30}
+                color={colors.dark}
+              />
+            }>
+            <Menu.Item
+              onPress={() => {
+                alert('Settings Pressed');
+              }}
+              title="Settings"
+            />
+            <Menu.Item
+              onPress={() => {
+                alert('Logout Pressed');
+              }}
+              title="Logout"
+            />
+          </Menu>
         </View>
       </View>
       <View style={styles.buttonsContainer}>
@@ -44,7 +73,17 @@ const BloodSugarScreen = () => {
           </TouchableOpacity>
         </View>
         <View>
-          <Text>Dropdown</Text>
+          <DropDownPicker
+            open={open}
+            value={value}
+            items={items}
+            setOpen={setOpen}
+            setValue={setValue}
+            setItems={setItems}
+            style={{
+              width: 100,
+            }}
+          />
         </View>
       </View>
 
@@ -54,7 +93,11 @@ const BloodSugarScreen = () => {
             return (
               <View style={styles.cardContainer} key={item}>
                 <Card
-                  style={{backgroundColor: 'white'}}
+                  style={{
+                    backgroundColor: 'white',
+                    borderTopColor: colors.pink,
+                    borderTopWidth: 1,
+                  }}
                   elevation={1}
                   onPress={() => {
                     alert('Card Pressed');
