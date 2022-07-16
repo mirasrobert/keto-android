@@ -2,9 +2,11 @@ import React from 'react';
 import colors from '../../Colors';
 import {StyleSheet, Text, View} from 'react-native';
 import {Button, TextInput} from 'react-native-paper';
-//import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import {useNavigation} from '@react-navigation/native';
 
 const LoginScreen = () => {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Keep Connected</Text>
@@ -29,7 +31,7 @@ const LoginScreen = () => {
         </View>
         <Button
           onPress={() => {
-            alert('Login Successful');
+            navigation.navigate('Chart');
           }}
           mode="contained"
           style={styles.mdRounded}

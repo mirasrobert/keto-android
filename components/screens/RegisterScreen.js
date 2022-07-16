@@ -9,7 +9,7 @@ const RegisterScreen = () => {
   const [show, setShow] = useState(false);
   const [dateOfBirth, setDateOfBirth] = useState();
 
-  const onChangeDate = (event, selectedDate) => {
+  const onChangeDate = (e, selectedDate) => {
     setShow(false);
     const currentDate = selectedDate || date;
     setDate(currentDate);
@@ -45,7 +45,7 @@ const RegisterScreen = () => {
           style={styles.emailInput}
         />
         <TextInput
-          left={<TextInput.Icon name="email-outline" />}
+          left={<TextInput.Icon name="calendar" />}
           mode="outlined"
           label="Date Of Birth"
           onPressOut={() => {
