@@ -3,8 +3,6 @@ import colors from '../../Colors';
 import {StyleSheet, Text, View} from 'react-native';
 import {Button, TextInput} from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
-
-import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const RegisterScreen = () => {
@@ -29,9 +27,14 @@ const RegisterScreen = () => {
   };
 
   const handleRegister = async () => {
-    const token = await AsyncStorage.getItem('token');
-
-    console.log('Token: ', token);
+    console.log('Hello');
+    try {
+      const token = await AsyncStorage.getItem('@token');
+      console.log(token);
+    } catch (e) {
+      // read error
+      console.log('Done.');
+    }
   };
 
   return (
@@ -83,9 +86,7 @@ const RegisterScreen = () => {
         />
 
         <Button
-          onPress={() => {
-            handleRegister();
-          }}
+          onPress={handleRegister}
           mode="contained"
           style={styles.mdRounded}
           contentStyle={styles.submitButton}>

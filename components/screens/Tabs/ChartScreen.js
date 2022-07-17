@@ -16,7 +16,7 @@ const ChartScreen = () => {
         }}>
         ChartScreen
       </Text>
-      <Text style={styles.title}>{!isLoading ? user.email : 'No Name'}</Text>
+      <Text style={styles.title}>{user ? user.email : 'No Name'}</Text>
     </View>
   );
 };

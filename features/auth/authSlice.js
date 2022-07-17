@@ -5,7 +5,7 @@ import api from '../axiosConfig';
 // Get User
 export const getUser = createAsyncThunk('auth/user', async (_, thunkAPI) => {
   try {
-    const token = await AsyncStorage.getItem('token');
+    const token = await AsyncStorage.getItem('@token');
     const response = await api.get('/api/auth/user', {
       headers: {
         'Content-Type': 'application/json',
@@ -30,6 +30,7 @@ export const loginUser = createAsyncThunk(
       });
       return response.data;
     } catch (error) {
+      console.log(error);
       return thunkAPI.rejectWithValue(error.response.data);
     }
   },
@@ -40,23 +41,33 @@ export const logoutUser = createAsyncThunk(
   'auth/logutUser',
   async (_, thunkAPI) => {
     try {
-      const token = await AsyncStorage.getItem('token');
-      const logout = await api.post('/api/auth/logout', {
-        headers: {
-          Authorization: `Token ${token}`,
-          'Content-Type': 'application/json',
+      const token = await AsyncStorage.getItem('@token');
+      console.log('Logout Token is ', token);
+      await api.post(
+        '/api/auth/logout',
+        {},
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+            'Content-Type': 'application/json',
+          },
         },
-      });
-      return true;
+      );
+      return {
+        success: true,
+      };
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
+      console.log(error);
+      return thunkAPI.rejectWithValue({
+        success: false,
+      });
     }
   },
 );
 
 const saveToken = async token => {
   try {
-    await AsyncStorage.setItem('token', token);
+    await AsyncStorage.setItem('@token', token);
     console.log('Token saved');
     return token;
   } catch (error) {
@@ -66,7 +77,7 @@ const saveToken = async token => {
 
 const removeToken = async () => {
   try {
-    await AsyncStorage.removeItem('token');
+    await AsyncStorage.removeItem('@token');
     console.log('Token removed');
     return true;
   } catch (error) {
@@ -149,13 +160,14 @@ export const authSlice = createSlice({
         state.isLoading = false;
         state.user = null;
         state.isAuthenticated = false;
-        removeToken().catch(e => console.log('Logout Success', e));
+        state.error = null;
+        removeToken().catch(e => console.log('Logout Error', e));
       })
-      .addCase(logoutUser.rejected, (state, action) => {
+      .addCase(logoutUser.rejected, state => {
         state.isLoading = false;
         state.isAuthenticated = false;
         state.user = null;
-        state.error = action.payload;
+        state.error = 'Something went wrong logging out';
         removeToken().catch(e =>
           console.log('Something went wrong removing token', e),
         );
