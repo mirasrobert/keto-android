@@ -4,6 +4,9 @@ import {StyleSheet, Text, View} from 'react-native';
 import {Button, TextInput} from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 const RegisterScreen = () => {
   const [date, setDate] = useState(new Date());
   const [show, setShow] = useState(false);
@@ -23,6 +26,12 @@ const RegisterScreen = () => {
       '/' +
       tempDate.getFullYear();
     setDateOfBirth(fDate);
+  };
+
+  const handleRegister = async () => {
+    const token = await AsyncStorage.getItem('token');
+
+    console.log('Token: ', token);
   };
 
   return (
@@ -75,7 +84,7 @@ const RegisterScreen = () => {
 
         <Button
           onPress={() => {
-            alert('Register Successful');
+            handleRegister();
           }}
           mode="contained"
           style={styles.mdRounded}

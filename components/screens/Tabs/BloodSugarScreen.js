@@ -14,7 +14,13 @@ import DropDownPicker from 'react-native-dropdown-picker';
 
 import Badge from '../../elements/Badge';
 
+// Global Redux State
+import {useSelector, useDispatch} from 'react-redux';
+import {logoutUser} from '../../../features/auth/authSlice';
+
 const BloodSugarScreen = () => {
+  const dispatch = useDispatch();
+
   const bloodSugar = [1, 2, 3, 4, 5, 6];
 
   // Menu
@@ -29,6 +35,10 @@ const BloodSugarScreen = () => {
     {label: 'All', value: 'All'},
     {label: 'Today', value: 'Today'},
   ]);
+
+  const handleLogout = () => {
+    dispatch(logoutUser());
+  };
 
   return (
     <View style={styles.wrapper}>
@@ -55,12 +65,7 @@ const BloodSugarScreen = () => {
               }}
               title="Settings"
             />
-            <Menu.Item
-              onPress={() => {
-                alert('Logout Pressed');
-              }}
-              title="Logout"
-            />
+            <Menu.Item onPress={handleLogout} title="Logout" />
           </Menu>
         </View>
       </View>

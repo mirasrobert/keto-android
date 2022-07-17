@@ -1,38 +1,77 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import colors from '../../Colors';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View, Alert} from 'react-native';
 import {Button, TextInput} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 
+import {useSelector, useDispatch} from 'react-redux';
+import {loginUser} from '../../features/auth/authSlice';
+import Loader from '../elements/Loader';
+
 const LoginScreen = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  const {isLoading, error} = useSelector(state => state.auth);
+
+  const handleLogin = e => {
+    // Validate Forms
+    if (username === '' && password === '') {
+      alert('Username and Password is required');
+      return;
+    }
+
+    if (username === '') {
+      alert('Username is required');
+      return;
+    }
+    if (password === '') {
+      alert('Password is required');
+      return;
+    }
+
+    dispatch(
+      loginUser({
+        username,
+        password,
+      }),
+    );
+  };
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Keep Connected</Text>
       <Text style={styles.subtitle}>
-        Enter your email address and password to get access to your account
+        Enter your username address and password to get access to your account
       </Text>
       <View style={styles.formWrapper}>
         <TextInput
           left={<TextInput.Icon name="email-outline" />}
           mode="outlined"
-          label="Email"
+          label="Username"
           style={styles.emailInput}
+          onChangeText={e => setUsername(e)}
+          value={username}
         />
         <TextInput
           left={<TextInput.Icon name="lock-outline" />}
           mode="outlined"
           secureTextEntry
           label="Password"
+          onChangeText={e => setPassword(e)}
+          value={password}
         />
         <View style={styles.forgotWrapper}>
           <Text style={styles.forgotPwd}>Forgot Password?</Text>
         </View>
         <Button
-          onPress={() => {
-            navigation.navigate('Tabs');
-          }}
+          onPress={handleLogin}
           mode="contained"
           style={styles.mdRounded}
           contentStyle={styles.submitButton}>
