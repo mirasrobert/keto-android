@@ -3,12 +3,18 @@ import colors from '../../Colors';
 import {StyleSheet, Text, View} from 'react-native';
 import {Button, TextInput} from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useDispatch} from 'react-redux';
+import {registerUser} from '../../features/auth/authSlice';
 
 const RegisterScreen = () => {
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
+  const [password, setPassword] = useState('');
   const [date, setDate] = useState(new Date());
   const [show, setShow] = useState(false);
   const [dateOfBirth, setDateOfBirth] = useState();
+
+  const dispatch = useDispatch();
 
   const onChangeDate = (e, selectedDate) => {
     setShow(false);
@@ -17,23 +23,39 @@ const RegisterScreen = () => {
 
     let tempDate = new Date(currentDate);
     let fDate =
-      tempDate.getMonth() +
+      tempDate.getFullYear() +
       1 +
-      '/' +
-      tempDate.getDate() +
-      '/' +
-      tempDate.getFullYear();
+      '-' +
+      tempDate.getMonth() +
+      '-' +
+      tempDate.getDate();
     setDateOfBirth(fDate);
   };
 
+  const validateEmail = email => {
+    return email.match(
+      /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+    );
+  };
+
   const handleRegister = async () => {
-    console.log('Hello');
-    try {
-      const token = await AsyncStorage.getItem('@token');
-      console.log(token);
-    } catch (e) {
-      // read error
-      console.log('Done.');
+    if (email === '' || name === '' || password === '' || dateOfBirth === '') {
+      alert('All fields are required');
+      return;
+    }
+
+    if (validateEmail(email.trim())) {
+      dispatch(
+        registerUser({
+          email: email.trim(),
+          name: name.trim(),
+          birthday: dateOfBirth.trim(),
+          password: password.trim(),
+        }),
+      );
+    } else {
+      alert('Invalid email');
+      return;
     }
   };
 
@@ -49,12 +71,16 @@ const RegisterScreen = () => {
           mode="outlined"
           label="Full Name"
           style={styles.emailInput}
+          value={name}
+          onChangeText={e => setName(e)}
         />
         <TextInput
           left={<TextInput.Icon name="email-outline" />}
           mode="outlined"
           label="Email"
           style={styles.emailInput}
+          value={email}
+          onChangeText={e => setEmail(e)}
         />
         <TextInput
           left={<TextInput.Icon name="calendar" />}
@@ -83,6 +109,8 @@ const RegisterScreen = () => {
           secureTextEntry
           label="Password"
           style={styles.emailInput}
+          value={password}
+          onChangeText={e => setPassword(e)}
         />
 
         <Button

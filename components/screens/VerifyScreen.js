@@ -2,42 +2,31 @@ import React, {useState, useEffect} from 'react';
 import colors from '../../Colors';
 import {StyleSheet, Text, View, Alert} from 'react-native';
 import {Button, TextInput} from 'react-native-paper';
-import {useNavigation} from '@react-navigation/native';
 
 import {useSelector, useDispatch} from 'react-redux';
-import {loginUser} from '../../features/auth/authSlice';
+import {verifyUser} from '../../features/auth/authSlice';
 import Loader from '../elements/Loader';
 
-const LoginScreen = () => {
-  const navigation = useNavigation();
+const VerifyScreen = () => {
   const dispatch = useDispatch();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [otp, setOtp] = useState('');
 
   const {isLoading} = useSelector(state => state.auth);
 
-  const handleLogin = e => {
-    // Validate Forms
-    if (email === '' && password === '') {
-      alert('Email and Password is required');
+  const handleVerify = () => {
+    if (otp === '') {
+      alert('OTP is required');
       return;
     }
 
-    if (email === '') {
-      alert('Email is required');
-      return;
-    }
-    if (password === '') {
-      alert('Password is required');
+    if (otp.length !== 6) {
+      alert('OTP must be 6 digits');
       return;
     }
 
     dispatch(
-      loginUser({
-        data: {
-          email: email.trim(),
-          password: password.trim(),
-        },
+      verifyUser({
+        verification_otp: otp.trim(),
         alert: Alert,
       }),
     );
@@ -49,36 +38,31 @@ const LoginScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Keep Connected</Text>
+      <Text style={styles.title}>Verify Email</Text>
       <Text style={styles.subtitle}>
-        Enter your email address and password to get access to your account
+        Code is sent to your email. Please enter the code to verify your account
       </Text>
       <View style={styles.formWrapper}>
         <TextInput
-          left={<TextInput.Icon name="email-outline" />}
           mode="outlined"
-          label="Email Address"
+          label="Code"
           style={styles.emailInput}
-          onChangeText={e => setEmail(e)}
-          value={email}
+          onChangeText={e => {
+            setOtp(e.replace(/[^0-9]/g, ''));
+          }}
+          value={otp}
         />
-        <TextInput
-          left={<TextInput.Icon name="lock-outline" />}
-          mode="outlined"
-          secureTextEntry
-          label="Password"
-          onChangeText={e => setPassword(e)}
-          value={password}
-        />
-        <View style={styles.forgotWrapper}>
-          <Text style={styles.forgotPwd}>Forgot Password?</Text>
-        </View>
+        <Text style={styles.resend}>
+          Didn't receive code? Click here to resend
+        </Text>
         <Button
-          onPress={handleLogin}
+          color={colors.primary}
+          disabled={otp === '' || otp.length !== 6}
+          onPress={handleVerify}
           mode="contained"
           style={styles.mdRounded}
           contentStyle={styles.submitButton}>
-          Log In
+          Verify Account
         </Button>
       </View>
     </View>
@@ -133,6 +117,14 @@ const styles = StyleSheet.create({
     opacity: 0.8,
     marginTop: 10,
   },
+  resend: {
+    fontSize: 13,
+    fontFamily: 'Roboto',
+    color: colors.dark,
+    opacity: 0.8,
+    marginBottom: 17,
+    textAlign: 'center',
+  },
 });
 
-export default LoginScreen;
+export default VerifyScreen;
