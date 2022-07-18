@@ -16,6 +16,15 @@ const LoginScreen = () => {
 
   const {isLoading} = useSelector(state => state.auth);
 
+  const showAlert = (title, msg) => {
+    Alert.alert(title, msg, [
+      {
+        text: 'OK',
+        onPress: () => {},
+      },
+    ]);
+  };
+
   const validateEmail = email => {
     return email.match(
       /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
@@ -25,16 +34,16 @@ const LoginScreen = () => {
   const handleLogin = e => {
     // Validate Forms
     if (email === '' && password === '') {
-      alert('Email and Password is required');
+      showAlert('Error', 'Please fill all fields');
       return;
     }
 
     if (email === '') {
-      alert('Email is required');
+      showAlert('Error', 'Please fill in email');
       return;
     }
     if (password === '') {
-      alert('Password is required');
+      showAlert('Error', 'Please fill in password');
       return;
     }
 
@@ -49,7 +58,7 @@ const LoginScreen = () => {
         }),
       );
     } else {
-      alert('Invalid email');
+      showAlert('Error', 'Please enter a valid email');
       return;
     }
   };

@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import colors from '../../Colors';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View, Alert} from 'react-native';
 import {Button, TextInput} from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {useDispatch} from 'react-redux';
@@ -15,6 +15,15 @@ const RegisterScreen = () => {
   const [dateOfBirth, setDateOfBirth] = useState();
 
   const dispatch = useDispatch();
+
+  const showAlert = (title, msg) => {
+    Alert.alert(title, msg, [
+      {
+        text: 'OK',
+        onPress: () => {},
+      },
+    ]);
+  };
 
   const onChangeDate = (e, selectedDate) => {
     setShow(false);
@@ -38,9 +47,54 @@ const RegisterScreen = () => {
     );
   };
 
+  const validateDate = dateStr => {
+    const regex = /^\d{4}-\d{2}-\d{2}$/;
+
+    if (dateStr.match(regex) === null) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
   const handleRegister = async () => {
-    if (email === '' || name === '' || password === '' || dateOfBirth === '') {
-      alert('All fields are required');
+    if (email === '' && name === '' && password === '' && !dateOfBirth) {
+      showAlert('Error', 'Please fill in all fields');
+      return;
+    }
+
+    if (email === '' && name === '') {
+      showAlert('Error', 'Please enter an email and name');
+      return;
+    }
+
+    if (!dateOfBirth && password === '') {
+      showAlert('Error', 'Please enter a password and date of birth');
+      return;
+    }
+
+    if (email === '') {
+      showAlert('Error', 'Please enter an email');
+      return;
+    }
+
+    if (name === '') {
+      showAlert('Error', 'Please enter a name');
+      return;
+    }
+
+    if (password === '') {
+      showAlert('Error', 'Please enter a password');
+      return;
+    }
+
+    if (!dateOfBirth) {
+      showAlert('Error', 'Please enter a date of birth');
+      return;
+    }
+
+    if (!validateDate(dateOfBirth)) {
+      showAlert('Error', 'Please enter a valid date of birth');
       return;
     }
 
@@ -54,7 +108,7 @@ const RegisterScreen = () => {
         }),
       );
     } else {
-      alert('Invalid email');
+      showAlert('Error', 'Please enter a valid email');
       return;
     }
   };
