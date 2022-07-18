@@ -16,6 +16,12 @@ const LoginScreen = () => {
 
   const {isLoading} = useSelector(state => state.auth);
 
+  const validateEmail = email => {
+    return email.match(
+      /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+    );
+  };
+
   const handleLogin = e => {
     // Validate Forms
     if (email === '' && password === '') {
@@ -32,15 +38,20 @@ const LoginScreen = () => {
       return;
     }
 
-    dispatch(
-      loginUser({
-        data: {
-          email: email.trim(),
-          password: password.trim(),
-        },
-        alert: Alert,
-      }),
-    );
+    if (validateEmail(email.trim())) {
+      dispatch(
+        loginUser({
+          data: {
+            email: email.trim(),
+            password: password.trim(),
+          },
+          alert: Alert,
+        }),
+      );
+    } else {
+      alert('Invalid email');
+      return;
+    }
   };
 
   if (isLoading) {

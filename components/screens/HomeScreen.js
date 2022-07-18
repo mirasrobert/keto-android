@@ -1,13 +1,32 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import colors from '../../Colors';
 import {StyleSheet, Text, View, Image} from 'react-native';
 // Import React Native paper button
 import {Button} from 'react-native-paper';
 
 import {useNavigation} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
+
+  const {error, loginHasError, registerHasError} = useSelector(
+    state => state.auth,
+  );
+
+  useEffect(() => {
+    console.log('HomeScreen Loaded');
+
+    if (error && loginHasError) {
+      navigation.navigate('Login');
+      return;
+    }
+
+    if (error && registerHasError) {
+      navigation.navigate('Register');
+      return;
+    }
+  }, []);
 
   return (
     <View style={styles.container}>

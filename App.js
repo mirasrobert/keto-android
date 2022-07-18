@@ -20,7 +20,9 @@ const Stack = createNativeStackNavigator();
 
 const RootNavigation = () => {
   const dispatch = useDispatch();
-  const {isLoading, isAuthenticated, user} = useSelector(state => state.auth);
+  const {isLoading, isAuthenticated, user, currentPage} = useSelector(
+    state => state.auth,
+  );
   useEffect(() => {
     dispatch(getUser());
     console.log('getUser Called');

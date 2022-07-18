@@ -166,6 +166,8 @@ const initialState = {
   user: null,
   error: null,
   token: null,
+  loginHasError: false,
+  registerHasError: false,
 };
 
 export const authSlice = createSlice({
@@ -180,6 +182,7 @@ export const authSlice = createSlice({
     builder
       .addCase(getUser.pending, state => {
         state.isLoading = true;
+        state.error = null;
       })
       .addCase(getUser.fulfilled, (state, action) => {
         state.isLoading = false;
@@ -198,6 +201,8 @@ export const authSlice = createSlice({
       })
       .addCase(loginUser.pending, state => {
         state.isLoading = true;
+        state.error = null;
+        state.registerHasError = false;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         console.log('loginUser.fulfilled');
@@ -225,11 +230,13 @@ export const authSlice = createSlice({
         state.isAuthenticated = false;
         state.user = null;
         state.error = action.payload;
-
+        state.loginHasError = true;
         console.log('Login Error', action.payload);
       })
       .addCase(registerUser.pending, state => {
         state.isLoading = true;
+        state.error = null;
+        state.loginHasError = false;
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         console.log('registerUser.fulfilled');
@@ -262,6 +269,7 @@ export const authSlice = createSlice({
       })
       .addCase(verifyUser.pending, state => {
         state.isLoading = true;
+        state.error = null;
       })
       .addCase(verifyUser.fulfilled, (state, action) => {
         state.isLoading = false;
@@ -277,11 +285,12 @@ export const authSlice = createSlice({
         state.isAuthenticated = false;
         state.user = null;
         state.error = action.payload;
-
+        state.registerHasError = true;
         console.log('Verify Error', action.payload);
       })
       .addCase(logoutUser.pending, state => {
         state.isLoading = true;
+        state.error = null;
       })
       .addCase(logoutUser.fulfilled, state => {
         state.isLoading = false;
