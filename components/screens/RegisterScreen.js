@@ -47,14 +47,14 @@ const RegisterScreen = () => {
     );
   };
 
-  const validateDate = dateStr => {
-    const regex = /^\d{4}-\d{2}-\d{2}$/;
+  const validateDate = str => {
+    const regex = /^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/;
+    return regex.test(str);
+  };
 
-    if (dateStr.match(regex) === null) {
-      return false;
-    } else {
-      return true;
-    }
+  const checkPassword = str => {
+    var re = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+    return re.test(str);
   };
 
   const handleRegister = async () => {
@@ -88,12 +88,21 @@ const RegisterScreen = () => {
       return;
     }
 
+    // Check password with min 8 characters password, with at least a symbol, upper and lower case letters and a number
+    if (!checkPassword(password.trim())) {
+      showAlert(
+        'Error',
+        'Please enter a password with minimum 8 characters, with at least have a symbol, upper and lower case letters and a number',
+      );
+      return;
+    }
+
     if (!dateOfBirth) {
       showAlert('Error', 'Please enter a date of birth');
       return;
     }
 
-    if (!validateDate(dateOfBirth)) {
+    if (!validateDate(dateOfBirth.trim())) {
       showAlert('Error', 'Please enter a valid date of birth');
       return;
     }
