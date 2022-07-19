@@ -41,7 +41,7 @@ const LoginScreen = () => {
       dispatch(
         loginUser({
           data: {
-            email: email.trim(),
+            email: email.trim().toLowerCase(),
             password: password.trim(),
           },
         }),
