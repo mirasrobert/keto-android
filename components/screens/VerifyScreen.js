@@ -1,14 +1,23 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import colors from '../../Colors';
-import {StyleSheet, Text, View, Alert} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import {Button, TextInput} from 'react-native-paper';
 
 import {useSelector, useDispatch} from 'react-redux';
 import {verifyUser} from '../../features/auth/authSlice';
 import Loader from '../elements/Loader';
 
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {Menu} from 'react-native-paper';
+import {logoutUser} from '../../features/auth/authSlice';
+
 const VerifyScreen = () => {
   const dispatch = useDispatch();
+
+  const [visible, setVisible] = useState(false);
+  const openMenu = () => setVisible(true);
+  const closeMenu = () => setVisible(false);
+
   const [otp, setOtp] = useState('');
 
   const {isLoading} = useSelector(state => state.auth);
@@ -27,9 +36,12 @@ const VerifyScreen = () => {
     dispatch(
       verifyUser({
         verification_otp: otp.trim(),
-        alert: Alert,
       }),
     );
+  };
+
+  const handleLogout = () => {
+    dispatch(logoutUser());
   };
 
   if (isLoading) {
@@ -38,7 +50,31 @@ const VerifyScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Verify Email</Text>
+      <View
+        style={{
+          justifyContent: 'space-between',
+          flexDirection: 'row',
+          alignItems: 'center',
+          marginTop: 45,
+        }}>
+        <Text style={styles.title}>Verify Email</Text>
+        <View>
+          <Menu
+            visible={visible}
+            onDismiss={closeMenu}
+            anchor={
+              <MaterialCommunityIcons
+                onPress={openMenu}
+                style={styles.icon}
+                name="dots-vertical"
+                size={30}
+                color={colors.dark}
+              />
+            }>
+            <Menu.Item onPress={handleLogout} title="Logout" />
+          </Menu>
+        </View>
+      </View>
       <Text style={styles.subtitle}>
         Code is sent to your email. Please enter the code to verify your account
       </Text>
@@ -52,8 +88,12 @@ const VerifyScreen = () => {
           }}
           value={otp}
         />
-        <Text style={styles.resend}>
-          Didn't receive code? Click here to resend
+        <Text style={styles.resend} numberOfLines={2}>
+          Didn't receive code? Click &nbsp;
+          <Text onPress={() => alert('resend')} style={{color: colors.blue}}>
+            here
+          </Text>
+          &nbsp; to resend
         </Text>
         <Button
           color={colors.primary}
@@ -80,7 +120,6 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold',
     fontFamily: 'Roboto',
-    marginTop: 45,
     color: colors.dark,
   },
   subtitle: {

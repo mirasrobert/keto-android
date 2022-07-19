@@ -1,6 +1,7 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../axiosConfig';
+import {showAlert} from '../../components/helpers/helpers';
 
 // Get User
 export const getUser = createAsyncThunk('auth/user', async (_, thunkAPI) => {
@@ -30,14 +31,7 @@ export const loginUser = createAsyncThunk(
       });
       return response.data;
     } catch (error) {
-      const showAlert = () =>
-        formData.alert.alert('Login Failed', 'Invalid username or password', [
-          {
-            text: 'OK',
-            onPress: () => {},
-          },
-        ]);
-      showAlert();
+      showAlert('Login Failed', 'Invalid username or password');
 
       console.log(error);
       return thunkAPI.rejectWithValue(error.response.data);
@@ -86,6 +80,7 @@ export const registerUser = createAsyncThunk(
       });
       return response.data;
     } catch (error) {
+      showAlert('Register Failed', 'Email already exists');
       console.log(error);
       return thunkAPI.rejectWithValue(error.response.data);
     }
@@ -107,34 +102,14 @@ export const verifyUser = createAsyncThunk(
 
       const {success, message} = response.data;
 
+      const title = success ? 'Verification Successful' : 'Verification Failed';
+
       // Show Message
-      if (success) {
-        formData.alert.alert('Verification Successful', 'Email is verified.', [
-          {
-            text: 'OK',
-            onPress: () => {},
-          },
-        ]);
-      } else {
-        formData.alert.alert('Verification Failed', message, [
-          {
-            text: 'OK',
-            onPress: () => {},
-          },
-        ]);
-      }
+      showAlert(title, message);
 
       return response.data;
     } catch (error) {
       console.log(error);
-
-      formData.alert.alert('Verification Failed', error.response.data.message, [
-        {
-          text: 'OK',
-          onPress: () => {},
-        },
-      ]);
-
       return thunkAPI.rejectWithValue(error.response.data);
     }
   },
@@ -211,6 +186,7 @@ export const authSlice = createSlice({
         state.isLoading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
+        state.loginHasError = false;
         if (state.user) {
           saveToken(action.payload.token).catch(e =>
             console.log('Error saving token', e),
@@ -245,6 +221,7 @@ export const authSlice = createSlice({
         state.isLoading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
+        state.registerHasError = false;
         if (state.user) {
           saveToken(action.payload.token).catch(e =>
             console.log('Error saving token', e),
@@ -264,8 +241,9 @@ export const authSlice = createSlice({
         state.isAuthenticated = false;
         state.user = null;
         state.error = action.payload;
+        state.registerHasError = true;
 
-        console.log('Login Error', action.payload);
+        console.log('Register Error', action.payload);
       })
       .addCase(verifyUser.pending, state => {
         state.isLoading = true;

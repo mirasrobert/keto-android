@@ -2,28 +2,18 @@ import React, {useState, useEffect} from 'react';
 import colors from '../../Colors';
 import {StyleSheet, Text, View, Alert} from 'react-native';
 import {Button, TextInput} from 'react-native-paper';
-import {useNavigation} from '@react-navigation/native';
 
 import {useSelector, useDispatch} from 'react-redux';
 import {loginUser} from '../../features/auth/authSlice';
 import Loader from '../elements/Loader';
+import {showAlert} from '../helpers/helpers';
 
 const LoginScreen = () => {
-  const navigation = useNavigation();
   const dispatch = useDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const {isLoading} = useSelector(state => state.auth);
-
-  const showAlert = (title, msg) => {
-    Alert.alert(title, msg, [
-      {
-        text: 'OK',
-        onPress: () => {},
-      },
-    ]);
-  };
 
   const validateEmail = email => {
     return email.match(
@@ -54,7 +44,6 @@ const LoginScreen = () => {
             email: email.trim(),
             password: password.trim(),
           },
-          alert: Alert,
         }),
       );
     } else {

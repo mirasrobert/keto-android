@@ -149,7 +149,7 @@ const RegisterScreen = () => {
           left={<TextInput.Icon name="calendar" />}
           mode="outlined"
           label="Date Of Birth"
-          onPressOut={() => {
+          onPressIn={() => {
             setShow(true);
           }}
           value={dateOfBirth}
