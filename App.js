@@ -9,6 +9,10 @@ import LoginScreen from './components/screens/LoginScreen';
 import RegisterScreen from './components/screens/RegisterScreen';
 import VerifyScreen from './components/screens/VerifyScreen';
 import TabScreen from './components/screens/Tabs/TabScreen';
+import AddBloodSugarForm from './components/forms/AddBloodSugarForm';
+import AddBloodPressureForm from './components/forms/AddBloodPressureForm';
+import AddWeightForm from './components/forms/AddWeightForm';
+import AddMedicationForm from './components/forms/AddMedicationForm';
 
 // Components
 import Loader from './components/elements/Loader';
@@ -20,9 +24,7 @@ const Stack = createNativeStackNavigator();
 
 const RootNavigation = () => {
   const dispatch = useDispatch();
-  const {isLoading, isAuthenticated, user, currentPage} = useSelector(
-    state => state.auth,
-  );
+  const {isLoading, isAuthenticated, user} = useSelector(state => state.auth);
   useEffect(() => {
     dispatch(getUser());
     console.log('getUser Called');
@@ -40,17 +42,41 @@ const RootNavigation = () => {
         {isAuthenticated && user ? (
           <>
             {Boolean(user.is_verified) ? (
-              <Stack.Screen
-                name="Tabs"
-                component={TabScreen}
-                options={{headerShown: false}}
-              />
+              <>
+                <Stack.Screen
+                  name="Tabs"
+                  component={TabScreen}
+                  options={{headerShown: false}}
+                />
+                <Stack.Screen
+                  name="AddBloodSugarForm"
+                  component={AddBloodSugarForm}
+                  options={{title: 'Blood Sugar'}}
+                />
+                <Stack.Screen
+                  name="AddBloodPressureForm"
+                  component={AddBloodPressureForm}
+                  options={{title: 'Blood Pressure'}}
+                />
+                <Stack.Screen
+                  name="AddWeightForm"
+                  component={AddWeightForm}
+                  options={{title: 'Weight'}}
+                />
+                <Stack.Screen
+                  name="AddMedicationForm"
+                  component={AddMedicationForm}
+                  options={{title: 'Medication'}}
+                />
+              </>
             ) : (
-              <Stack.Screen
-                name="Verify"
-                component={VerifyScreen}
-                options={{headerShown: false}}
-              />
+              <>
+                <Stack.Screen
+                  name="Verify"
+                  component={VerifyScreen}
+                  options={{headerShown: false}}
+                />
+              </>
             )}
           </>
         ) : (
