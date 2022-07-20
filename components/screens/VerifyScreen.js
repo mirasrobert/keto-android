@@ -86,7 +86,7 @@ const VerifyScreen = () => {
     setTimeout(() => {
       setIsTimerStarted(false);
       stopTimer();
-    }, 60000);
+    }, 59000);
   };
 
   if (isLoading) {
@@ -162,14 +162,14 @@ const VerifyScreen = () => {
           contentStyle={styles.submitButton}>
           Verify Account
         </Button>
-        <Button
+        {/* <Button
           color={colors.primary}
           onPress={stopTimer}
           mode="contained"
           style={styles.mdRounded}
           contentStyle={styles.submitButton}>
           STOP TIMER
-        </Button>
+        </Button> */}
       </View>
     </View>
   );
