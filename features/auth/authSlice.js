@@ -1,6 +1,6 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import api from '../axiosConfig';
+import api from '../../axiosConfig';
 import {showAlert} from '../../components/helpers/helpers';
 
 // Get User

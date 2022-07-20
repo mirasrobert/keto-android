@@ -1,19 +1,28 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import colors from '../../../Colors';
-import {StyleSheet, Text, View, SafeAreaView, ScrollView} from 'react-native';
+import {StyleSheet, View, SafeAreaView, FlatList} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
+
 // Global Redux State
-import {useDispatch} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
+import {getBloodSugarList} from '../../../features/tabs/bloodSugarSlice';
 
 import Container from '../../elements/Container';
 import Header from '../../elements/Header';
 import SimpleButton from '../../elements/SimpleButton';
+import Loader from '../../elements/Loader';
 import CardBloodSugar from '../../screen_components/CardBloodSugar';
 
 const BloodSugarScreen = () => {
   const dispatch = useDispatch();
 
-  const bloodSugar = [1, 2, 3, 4, 5, 6];
+  const {bloodSugars: DATA, isLoading: bloodSugarIsLoading} = useSelector(
+    state => state.bloodSugar,
+  );
+
+  useEffect(() => {
+    dispatch(getBloodSugarList());
+  }, []);
 
   // Dropdown Select
   const [open, setOpen] = useState(false);
@@ -22,7 +31,6 @@ const BloodSugarScreen = () => {
     {label: 'All', value: 'All'},
     {label: 'Today', value: 'Today'},
   ]);
-
   return (
     <Container>
       <Header title="Blood Sugar" />
@@ -44,11 +52,17 @@ const BloodSugarScreen = () => {
       </View>
 
       <SafeAreaView style={styles.cardsRecord}>
-        <ScrollView style={styles.cardsrecordScrollView}>
-          {bloodSugar.map((item, index) => {
-            return <CardBloodSugar key={index} />;
-          })}
-        </ScrollView>
+        <View style={styles.cardsrecordScrollView}>
+          {bloodSugarIsLoading ? (
+            <Loader />
+          ) : (
+            <FlatList
+              data={DATA}
+              renderItem={({item}) => <CardBloodSugar item={item} />}
+              keyExtractor={item => item.id}
+            />
+          )}
+        </View>
       </SafeAreaView>
     </Container>
   );

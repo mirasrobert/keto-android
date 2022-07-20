@@ -4,7 +4,7 @@ import {View, StyleSheet, Text} from 'react-native';
 import {Card, Paragraph} from 'react-native-paper';
 import Badge from '../elements/Badge';
 
-const CardBloodSugar = () => {
+const CardBloodSugar = ({item}) => {
   return (
     <View style={styles.cardContainer}>
       <Card
@@ -15,15 +15,16 @@ const CardBloodSugar = () => {
         }}
         elevation={1}
         onPress={() => {
-          alert('Card Pressed');
+          alert(item.id);
         }}>
         <Card.Content style={styles.cardWrapper}>
           <View>
-            <Paragraph style={styles.date}>Feb 13, 2022 05:18 PM</Paragraph>
-            <Paragraph style={styles.measured}>Measured: After lunch</Paragraph>
+            <Paragraph style={styles.date}>{item.created_at}</Paragraph>
+            <Paragraph style={styles.measured}>
+              Measured: {item.measured}
+            </Paragraph>
             <Paragraph style={styles.notes}>
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ratione
-              possimus ex recusandae.
+              {item.notes && item.notes.length > 0 ? item.notes : ''}
             </Paragraph>
             <Badge
               text="Normal"
@@ -32,7 +33,9 @@ const CardBloodSugar = () => {
             />
           </View>
           <View>
-            <Text style={styles.measurement}>5.6 mmol /L</Text>
+            <Text style={styles.measurement}>
+              {item.sugar_concentration} mmol /L
+            </Text>
           </View>
         </Card.Content>
       </Card>
