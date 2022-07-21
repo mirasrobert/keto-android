@@ -3,55 +3,68 @@ import colors from '../../Colors';
 import {StyleSheet, Text, View} from 'react-native';
 import {Button, TextInput} from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import DropDownPicker from 'react-native-dropdown-picker';
+import moment from 'moment-timezone';
+
+import {useDispatch} from 'react-redux';
+import {addBloodPressure} from '../../features/tabs/bloodPressureSlice';
+
 import {showAlert} from '../helpers/helpers';
 
 const AddBloodPressureForm = () => {
+  const dispatch = useDispatch();
+
+  // Dropdown Select
+  const [open, setOpen] = useState(false);
+  const [items, setItems] = useState([
+    {label: 'Left arm', value: 'Left'},
+    {label: 'Right arm', value: 'Right'},
+  ]);
+
+  const [value, setValue] = useState(items[0].value);
+
   const [formData, setFormData] = useState({
     systolic_pressure: '',
     diastolic_pressure: '',
-    date: '',
-    time: '',
     notes: '',
   });
 
-  const [dateTime, setDateTime] = useState(new Date());
+  const dateToday = moment().tz('Asia/Manila').format('YYYY-MM-DD HH:mm');
+  const timeToday = moment().tz('Asia/Manila').format('hh:mm A');
+
+  const [date, setDate] = useState(moment(dateToday).format('YYYY-MM-DD'));
+  const [time, setTime] = useState(timeToday);
+  const [covert12HRTo24HR, setCovert12HRTo24HR] = useState(
+    moment(timeToday, 'hh:mm A').tz('Asia/Manila').format('HH:mm'),
+  );
+
+  const [dateTime, setDateTime] = useState(moment().toDate());
 
   const [show, setShow] = useState(false);
   const [mode, setMode] = useState('date');
 
   const onChangeDate = (e, selectedDate) => {
     setShow(false);
-    const currentDate = selectedDate || date;
-    setDateTime(currentDate);
+    const currentDate = selectedDate || dateTime; // Date time object
+    setDateTime(currentDate); // Set the date value of the calendar
 
-    let tempDate = new Date(currentDate);
-    let fDate =
-      tempDate.getFullYear() +
-      1 +
-      '-' +
-      tempDate.getMonth() +
-      '-' +
-      tempDate.getDate();
+    let fDate = moment(new Date(currentDate))
+      .tz('Asia/Manila')
+      .format('YYYY-MM-DD'); // Format the date to YYYY-MM-DD String
+    let fTime = moment(new Date(currentDate))
+      .tz('Asia/Manila')
+      .format('hh:mm A');
+    setDate(fDate); // Set the date on the form
+    setTime(fTime); // Set the time on the form
 
-    // Get the AM and PM
-    let ampm = 'AM';
-    let hours = tempDate.getHours();
-    if (hours >= 12) {
-      ampm = 'PM';
-    }
-    if (hours > 12) {
-      hours -= 12;
-    }
-    if (hours === 0) {
-      hours = 12;
-    }
-
-    let fTime = tempDate.getHours() + ':' + tempDate.getMinutes() + ' ' + ampm;
-    setFormData({...formData, date: fDate, time: fTime}); // update the state with the new date & time
+    converted24HTime = moment(fTime, 'hh:mm A')
+      .tz('Asia/Manila')
+      .format('HH:mm');
+    setCovert12HRTo24HR(converted24HTime);
   };
 
   // Desctructuring formData
-  const {systolic_pressure, diastolic_pressure, date, time, notes} = formData;
+  const {systolic_pressure, diastolic_pressure, notes} = formData;
 
   // Validations
   const validateDate = str => {
@@ -74,6 +87,32 @@ const AddBloodPressureForm = () => {
       showAlert('Error', 'Please enter a valid date');
       return;
     }
+
+    const timeToSaved = `${covert12HRTo24HR}:01`;
+
+    // Add Blood Sugar Record
+    dispatch(
+      addBloodPressure({
+        systolic_pressure: systolic_pressure.trim(),
+        diastolic_pressure: diastolic_pressure.trim(),
+        arm: value,
+        notes: notes.trim(),
+        date: date,
+        time: timeToSaved,
+      }),
+    );
+
+    // Reset Form
+    setFormData({
+      systolic_pressure: '',
+      diastolic_pressure: '',
+      notes: '',
+    });
+
+    // Reset Date
+    setDate(moment().format('YYYY-MM-DD'));
+    setTime(moment().format('hh:mm A'));
+    setCovert12HRTo24HR(moment().format('HH:mm'));
   };
 
   return (
@@ -81,28 +120,42 @@ const AddBloodPressureForm = () => {
       <Text style={styles.title}>Add Blood Pressure</Text>
       <View style={styles.formWrapper}>
         <TextInput
+          keyboardType="numeric"
           mode="outlined"
-          label="Systolic Pressure"
+          label="Sugar Concentration"
           style={styles.inputStyle}
           onChangeText={e =>
             setFormData({
               ...formData,
-              systolic_pressure: e.replace(/[^0-9]/g, ''),
+              systolic_pressure: e,
             })
           }
           value={systolic_pressure}
         />
         <TextInput
+          keyboardType="numeric"
           mode="outlined"
           label="Diastolic Pressure"
           style={styles.inputStyle}
           onChangeText={e =>
             setFormData({
               ...formData,
-              diastolic_pressure: e.replace(/[^0-9]/g, ''),
+              diastolic_pressure: e,
             })
           }
           value={diastolic_pressure}
+        />
+        <DropDownPicker
+          open={open}
+          value={value}
+          items={items}
+          setOpen={setOpen}
+          setValue={setValue}
+          setItems={setItems}
+          style={{
+            width: '100%',
+            marginBottom: 21,
+          }}
         />
         <View style={styles.dateWrapper}>
           <View style={styles.dateInput}>
@@ -139,7 +192,7 @@ const AddBloodPressureForm = () => {
             value={dateTime}
             mode={mode}
             display="default"
-            is24Hour={true}
+            is24Hour={false}
             onChange={onChangeDate}
           />
         )}

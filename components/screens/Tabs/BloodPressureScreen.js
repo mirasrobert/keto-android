@@ -1,20 +1,28 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import colors from '../../../Colors';
-import {StyleSheet, View, SafeAreaView, ScrollView} from 'react-native';
+import {StyleSheet, View, SafeAreaView, FlatList} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 
 // Global Redux State
-import {useDispatch} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
+import {getBloodPressureList} from '../../../features/tabs/bloodPressureSlice';
 
 import Container from '../../elements/Container';
 import Header from '../../elements/Header';
 import SimpleButton from '../../elements/SimpleButton';
+import Loader from '../../elements/Loader';
 import CardBloodPressure from '../../screen_components/CardBloodPressure';
 
 const BloodPressureScreen = () => {
   const dispatch = useDispatch();
 
-  const bloodSugar = [1, 2, 3, 4, 5, 6];
+  const {bloodPressureList: DATA, isLoading: bloodSugarIsLoading} = useSelector(
+    state => state.bloodPressure,
+  );
+
+  useEffect(() => {
+    dispatch(getBloodPressureList());
+  }, []);
 
   // Dropdown Select
   const [open, setOpen] = useState(false);
@@ -45,11 +53,17 @@ const BloodPressureScreen = () => {
       </View>
 
       <SafeAreaView style={styles.cardsRecord}>
-        <ScrollView style={styles.cardsrecordScrollView}>
-          {bloodSugar.map((item, index) => {
-            return <CardBloodPressure key={index} />;
-          })}
-        </ScrollView>
+        <View style={styles.cardsrecordScrollView}>
+          {bloodSugarIsLoading ? (
+            <Loader />
+          ) : (
+            <FlatList
+              data={DATA}
+              renderItem={({item}) => <CardBloodPressure item={item} />}
+              keyExtractor={item => item.id}
+            />
+          )}
+        </View>
       </SafeAreaView>
     </Container>
   );

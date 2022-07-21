@@ -3,13 +3,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../../axiosConfig';
 import {showAlert} from '../../components/helpers/helpers';
 
-// Get Blood Sugar List
-export const getBloodSugarList = createAsyncThunk(
-  'bloodSugar/getBloodSugarList',
+// Get Blood Pressure List
+export const getBloodPressureList = createAsyncThunk(
+  'bloodPressure/getBloodPressureList',
   async (_, thunkAPI) => {
     try {
       const token = await AsyncStorage.getItem('@token');
-      const response = await api.get('/api/bloodsugar/', {
+      const response = await api.get('/api/bloodpressure/', {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Token ${token}`,
@@ -22,20 +22,20 @@ export const getBloodSugarList = createAsyncThunk(
   },
 );
 
-// Add Blood Sugar Record
-export const addBloodSugar = createAsyncThunk(
-  'bloodSugar/addBloodSugar',
+// Add Blood Pressure Record
+export const addBloodPressure = createAsyncThunk(
+  'bloodPressure/addBloodPressure',
   async (formData, thunkAPI) => {
     try {
       const token = await AsyncStorage.getItem('@token');
-      const response = await api.post('/api/bloodsugar/', formData, {
+      const response = await api.post('/api/bloodpressure/', formData, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Token ${token}`,
         },
       });
 
-      showAlert('Success', 'Blood Sugar Record Added');
+      showAlert('Success', 'Blood Pressure Record Added');
 
       return response.data;
     } catch (error) {
@@ -46,14 +46,14 @@ export const addBloodSugar = createAsyncThunk(
   },
 );
 
-// Edit Blood Sugar Record
-export const editBloodSugar = createAsyncThunk(
-  'bloodSugar/editBloodSugar',
+// Edit Blood Pressure Record
+export const editBloodPressure = createAsyncThunk(
+  'bloodPressure/editBloodPressure',
   async (formData, thunkAPI) => {
     try {
       const token = await AsyncStorage.getItem('@token');
       const response = await api.put(
-        `/api/bloodsugar/${formData.id}/update/`,
+        `/api/bloodpressure/${formData.id}/update/`,
         formData.form,
         {
           headers: {
@@ -63,7 +63,7 @@ export const editBloodSugar = createAsyncThunk(
         },
       );
 
-      showAlert('Success', 'Blood Sugar Record Updated');
+      showAlert('Success', 'Blood Pressure Record Updated');
 
       return response.data;
     } catch (error) {
@@ -74,14 +74,14 @@ export const editBloodSugar = createAsyncThunk(
   },
 );
 
-// Delete Blood Sugar Record
-export const deleteBloodSugar = createAsyncThunk(
-  'bloodSugar/deleteBloodSugar',
+// Delete Blood Pressure Record
+export const deleteBloodPressure = createAsyncThunk(
+  'bloodPressure/deleteBloodPressure',
   async (id, thunkAPI) => {
     try {
       const token = await AsyncStorage.getItem('@token');
       const response = await api.delete(
-        `/api/bloodsugar/${id}/delete/`,
+        `/api/bloodpressure/${id}/delete/`,
         {},
         {
           headers: {
@@ -91,7 +91,7 @@ export const deleteBloodSugar = createAsyncThunk(
         },
       );
 
-      showAlert('Success', 'Blood Sugar Record Removed');
+      showAlert('Success', 'Blood Pressure Record Removed');
 
       return response.data;
     } catch (error) {
@@ -104,12 +104,12 @@ export const deleteBloodSugar = createAsyncThunk(
 
 const initialState = {
   isLoading: false,
-  bloodSugars: [],
+  bloodPressureList: [],
   error: null,
 };
 
-export const bloodSugarSlice = createSlice({
-  name: 'bloodSugar',
+export const bloodPressureSlice = createSlice({
+  name: 'bloodPressure',
   initialState,
   reducers: {
     resetState: state => {
@@ -118,68 +118,70 @@ export const bloodSugarSlice = createSlice({
   },
   extraReducers: builder => {
     builder
-      .addCase(getBloodSugarList.pending, state => {
+      .addCase(getBloodPressureList.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(getBloodSugarList.fulfilled, (state, action) => {
+      .addCase(getBloodPressureList.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.bloodSugars = action.payload;
+        state.bloodPressureList = action.payload;
         state.error = null;
       })
-      .addCase(getBloodSugarList.rejected, (state, action) => {
+      .addCase(getBloodPressureList.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
-        state.bloodSugars = [];
+        state.bloodPressureList = [];
       })
-      .addCase(addBloodSugar.pending, state => {
+      .addCase(addBloodPressure.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(addBloodSugar.fulfilled, (state, action) => {
+      .addCase(addBloodPressure.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.bloodSugars = [action.payload, ...state.bloodSugars];
+        state.bloodPressureList = [action.payload, ...state.bloodPressureList];
         state.error = null;
       })
-      .addCase(addBloodSugar.rejected, (state, action) => {
+      .addCase(addBloodPressure.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
-        state.bloodSugars = [];
+        state.bloodPressureList = [];
       })
-      .addCase(editBloodSugar.pending, state => {
+      .addCase(editBloodPressure.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(editBloodSugar.fulfilled, (state, action) => {
+      .addCase(editBloodPressure.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.bloodSugars = state.bloodSugars.map(bloodSugar =>
-          bloodSugar.id === action.payload.id ? action.payload : bloodSugar,
+        state.bloodPressureList = state.bloodPressureList.map(bloodPressure =>
+          bloodPressure.id === action.payload.id
+            ? action.payload
+            : bloodPressure,
         );
         state.error = null;
       })
-      .addCase(editBloodSugar.rejected, (state, action) => {
+      .addCase(editBloodPressure.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
-        state.bloodSugars = [];
+        state.bloodPressureList = [];
       })
-      .addCase(deleteBloodSugar.pending, state => {
+      .addCase(deleteBloodPressure.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(deleteBloodSugar.fulfilled, (state, action) => {
+      .addCase(deleteBloodPressure.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.bloodSugars = state.bloodSugars.filter(
-          bloodSugar => bloodSugar.id !== action.payload.id,
+        state.bloodPressureList = state.bloodPressureList.filter(
+          bloodPressure => bloodPressure.id !== action.payload.id,
         );
         state.error = null;
       })
-      .addCase(deleteBloodSugar.rejected, (state, action) => {
+      .addCase(deleteBloodPressure.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
-        state.bloodSugars = [];
+        state.bloodPressureList = [];
       });
   },
 });
 
-export const {resetState} = bloodSugarSlice.actions;
-export default bloodSugarSlice.reducer;
+export const {resetState} = bloodPressureSlice.actions;
+export default bloodPressureSlice.reducer;

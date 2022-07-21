@@ -47,7 +47,7 @@ export const logoutUser = createAsyncThunk(
       const token = await AsyncStorage.getItem('@token');
       console.log('Logout Token is ', token);
       await api.post(
-        '/api/auth/logout',
+        '/api/auth/logout/',
         {},
         {
           headers: {

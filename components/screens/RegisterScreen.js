@@ -5,12 +5,13 @@ import {Button, TextInput} from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {useDispatch} from 'react-redux';
 import {registerUser} from '../../features/auth/authSlice';
+import moment from 'moment';
 
 const RegisterScreen = () => {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState(moment().toDate());
   const [show, setShow] = useState(false);
   const [dateOfBirth, setDateOfBirth] = useState();
 
@@ -30,14 +31,11 @@ const RegisterScreen = () => {
     const currentDate = selectedDate || date;
     setDate(currentDate);
 
-    let tempDate = new Date(currentDate);
-    let fDate =
-      tempDate.getFullYear() +
-      1 +
-      '-' +
-      tempDate.getMonth() +
-      '-' +
-      tempDate.getDate();
+    let tempDate = currentDate;
+
+    let fDate = moment(tempDate).format('YYYY-MM-DD');
+
+    console.log(fDate);
     setDateOfBirth(fDate);
   };
 

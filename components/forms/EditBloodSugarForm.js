@@ -7,11 +7,13 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import moment from 'moment-timezone';
 
 import {useDispatch} from 'react-redux';
-import {addBloodSugar} from '../../features/tabs/bloodSugarSlice';
+import {editBloodSugar} from '../../features/tabs/bloodSugarSlice';
 
 import {showAlert} from '../helpers/helpers';
 
-const AddBloodSugarForm = () => {
+const EditBloodSugarForm = ({route, navigation}) => {
+  const {data} = route.params; // Data
+
   const dispatch = useDispatch();
 
   // Dropdown Select
@@ -27,23 +29,25 @@ const AddBloodSugarForm = () => {
     {label: 'After bed', value: 'After bed'},
   ]);
 
-  const [value, setValue] = useState(items[0].value);
+  // DateTimePicker
+  const [value, setValue] = useState(data.measured);
 
+  // Form
   const [formData, setFormData] = useState({
-    sugar_concentration: '',
-    notes: '',
+    sugar_concentration: data.sugar_concentration || '',
+    notes: data.notes || '',
   });
 
-  const dateToday = moment().tz('Asia/Manila').format('YYYY-MM-DD HH:mm');
-  const timeToday = moment().tz('Asia/Manila').format('hh:mm A');
-
-  const [date, setDate] = useState(moment(dateToday).format('YYYY-MM-DD'));
-  const [time, setTime] = useState(timeToday);
+  const dataTime = moment(data.time, 'hh:mm:ss').format('LT');
+  const [date, setDate] = useState(moment(data.date).format('YYYY-MM-DD'));
+  const [time, setTime] = useState(dataTime);
   const [covert12HRTo24HR, setCovert12HRTo24HR] = useState(
-    moment(timeToday, 'hh:mm A').tz('Asia/Manila').format('HH:mm'),
+    moment(dataTime, 'hh:mm A').tz('Asia/Manila').format('HH:mm'),
   );
 
-  const [dateTime, setDateTime] = useState(moment().toDate());
+  const [dateTime, setDateTime] = useState(
+    moment(`${data.date} ${data.time}`).toDate(),
+  );
 
   const [show, setShow] = useState(false);
   const [mode, setMode] = useState('date');
@@ -92,12 +96,15 @@ const AddBloodSugarForm = () => {
 
     // Add Blood Sugar Record
     dispatch(
-      addBloodSugar({
-        sugar_concentration: sugar_concentration.trim(),
-        measured: value,
-        notes: notes.trim(),
-        date: date,
-        time: timeToSaved,
+      editBloodSugar({
+        id: data.id,
+        form: {
+          sugar_concentration: sugar_concentration.trim(),
+          measured: value,
+          notes: notes.trim(),
+          date: date,
+          time: timeToSaved,
+        },
       }),
     );
 
@@ -107,15 +114,13 @@ const AddBloodSugarForm = () => {
       notes: '',
     });
 
-    // Reset Date
-    setDate(moment().format('YYYY-MM-DD'));
-    setTime(moment().format('hh:mm A'));
-    setCovert12HRTo24HR(moment().format('HH:mm'));
+    // Go Back
+    navigation.goBack();
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Add Blood Sugar</Text>
+      <Text style={styles.title}>Edit Blood Sugar</Text>
       <View style={styles.formWrapper}>
         <TextInput
           keyboardType="numeric"
@@ -195,7 +200,7 @@ const AddBloodSugarForm = () => {
           mode="contained"
           style={styles.mdRounded}
           contentStyle={styles.submitButton}>
-          Add Record
+          Update Record
         </Button>
       </View>
     </View>
@@ -248,4 +253,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddBloodSugarForm;
+export default EditBloodSugarForm;

@@ -5,6 +5,7 @@ import {Menu} from 'react-native-paper';
 import {useDispatch} from 'react-redux';
 import {logoutUser} from '../../features/auth/authSlice';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {showAlertDialog} from '../helpers/helpers';
 
 const Header = ({title}) => {
   const dispatch = useDispatch();
@@ -13,7 +14,9 @@ const Header = ({title}) => {
   const closeMenu = () => setVisible(false);
 
   const handleLogout = () => {
-    dispatch(logoutUser());
+    showAlertDialog('Logout', 'Are you sure you want to logout?', () => {
+      dispatch(logoutUser());
+    });
   };
 
   return (

@@ -9,6 +9,17 @@ export const showAlert = (title, msg) => {
   ]);
 };
 
+export const showAlertDialog = (title, msg, func) => {
+  Alert.alert(title, msg, [
+    {
+      text: 'Cancel',
+      onPress: () => {},
+      style: 'cancel',
+    },
+    {text: 'Yes', onPress: () => func},
+  ]);
+};
+
 const calcTimeLeft = t => {
   if (!t) return 0;
 
