@@ -5,13 +5,17 @@ import DropDownPicker from 'react-native-dropdown-picker';
 
 // Global Redux State
 import {useSelector, useDispatch} from 'react-redux';
-import {getBloodSugarList} from '../../../features/tabs/bloodSugarSlice';
+import {
+  getBloodSugarList,
+  filterBloodSugarListByDate,
+} from '../../../features/tabs/bloodSugarSlice';
 
 import Container from '../../elements/Container';
 import Header from '../../elements/Header';
 import SimpleButton from '../../elements/SimpleButton';
 import Loader from '../../elements/Loader';
 import CardBloodSugar from '../../screen_components/CardBloodSugar';
+import moment from 'moment';
 
 const BloodSugarScreen = () => {
   const dispatch = useDispatch();
@@ -26,28 +30,47 @@ const BloodSugarScreen = () => {
 
   // Dropdown Select
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState('All');
   const [items, setItems] = useState([
     {label: 'All', value: 'All'},
     {label: 'Today', value: 'Today'},
+    {label: 'Yesterday', value: 'Yesterday'},
   ]);
+  const [value, setValue] = useState(items[0].value);
   return (
     <Container>
       <Header title="Blood Sugar" />
       <View style={styles.buttonsContainer}>
         <SimpleButton screen="AddBloodSugarForm" buttonText="Add Record" />
         <View>
-          <DropDownPicker
-            open={open}
-            value={value}
-            items={items}
-            setOpen={setOpen}
-            setValue={setValue}
-            setItems={setItems}
-            style={{
-              width: 100,
-            }}
-          />
+          {!bloodSugarIsLoading && (
+            <DropDownPicker
+              onSelectItem={item => {
+                // Get today date by moment
+                const today = moment().format('YYYY-MM-DD');
+                // Get yesterdate date by mement
+                const yesterday = moment()
+                  .subtract(1, 'days')
+                  .format('YYYY-MM-DD');
+
+                if (item.value === 'Today') {
+                  dispatch(filterBloodSugarListByDate({date: today}));
+                } else if (item.value === 'Yesterday') {
+                  dispatch(filterBloodSugarListByDate({date: yesterday}));
+                } else {
+                  dispatch(getBloodSugarList());
+                }
+              }}
+              open={open}
+              value={value}
+              items={items}
+              setOpen={setOpen}
+              setValue={setValue}
+              setItems={setItems}
+              style={{
+                width: 100,
+              }}
+            />
+          )}
         </View>
       </View>
 

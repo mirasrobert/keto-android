@@ -8,6 +8,7 @@ import {Menu} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
 import {deleteBloodSugar} from '../../features/tabs/bloodSugarSlice';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const CardBloodSugar = ({item}) => {
   const navigation = useNavigation();
@@ -46,6 +47,7 @@ const CardBloodSugar = ({item}) => {
       <Menu
         visible={visible}
         onDismiss={closeMenu}
+        contentStyle={{padding: 0, margin: 0}}
         anchor={
           <Card
             style={{
@@ -81,6 +83,7 @@ const CardBloodSugar = ({item}) => {
           </Card>
         }>
         <Menu.Item
+          icon={() => <MaterialCommunityIcons name="pencil" size={20} />}
           onPress={() => {
             closeMenu();
             navigation.navigate('EditBloodSugarForm', {data: item});
@@ -88,6 +91,7 @@ const CardBloodSugar = ({item}) => {
           title="Edit"
         />
         <Menu.Item
+          icon={() => <MaterialCommunityIcons name="delete" size={20} />}
           onPress={() => {
             Alert.alert(
               'Delete',

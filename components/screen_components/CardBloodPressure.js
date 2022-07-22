@@ -7,6 +7,7 @@ import moment from 'moment-timezone';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
 import {deleteBloodPressure} from '../../features/tabs/bloodPressureSlice';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const CardBloodPressure = ({item, borderTopColor}) => {
   const navigation = useNavigation();
@@ -81,6 +82,7 @@ const CardBloodPressure = ({item, borderTopColor}) => {
           </Card>
         }>
         <Menu.Item
+          icon={() => <MaterialCommunityIcons name="pencil" size={20} />}
           onPress={() => {
             closeMenu();
             navigation.navigate('EditBloodPressureForm', {data: item});
@@ -88,6 +90,7 @@ const CardBloodPressure = ({item, borderTopColor}) => {
           title="Edit"
         />
         <Menu.Item
+          icon={() => <MaterialCommunityIcons name="delete" size={20} />}
           onPress={() => {
             Alert.alert(
               'Delete',

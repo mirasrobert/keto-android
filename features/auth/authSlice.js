@@ -105,7 +105,7 @@ export const verifyUser = createAsyncThunk(
       const title = success ? 'Verification Successful' : 'Verification Failed';
 
       // Show Message
-      showAlert(title, 'Email verified successfully');
+      showAlert(title, message);
 
       return response.data;
     } catch (error) {

@@ -101,6 +101,31 @@ export const deleteBloodPressure = createAsyncThunk(
   },
 );
 
+// List of Blood Sugar By Single Date
+export const filterBloodPressureListByDate = createAsyncThunk(
+  'bloodPressure/filterBloodPressureListByDate',
+  async (data, thunkAPI) => {
+    try {
+      const token = await AsyncStorage.getItem('@token');
+      const response = await api.get(
+        `/api/bloodpressure/get_by_single_date?date=${data.date}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Token ${token}`,
+          },
+        },
+      );
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      showAlert('Error', 'Error filtering your record');
+      console.log(error.response.data);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  },
+);
+
 const initialState = {
   isLoading: false,
   bloodPressureList: [],
@@ -127,6 +152,20 @@ export const bloodPressureSlice = createSlice({
         state.error = null;
       })
       .addCase(getBloodPressureList.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+        state.bloodPressureList = [];
+      })
+      .addCase(filterBloodPressureListByDate.pending, state => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(filterBloodPressureListByDate.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.bloodPressureList = action.payload;
+        state.error = null;
+      })
+      .addCase(filterBloodPressureListByDate.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
         state.bloodPressureList = [];

@@ -98,6 +98,31 @@ export const deleteBloodSugar = createAsyncThunk(
   },
 );
 
+// List of Blood Sugar By Single Date
+export const filterBloodSugarListByDate = createAsyncThunk(
+  'bloodSugar/filterBloodSugarListByDate',
+  async (data, thunkAPI) => {
+    try {
+      const token = await AsyncStorage.getItem('@token');
+      const response = await api.get(
+        `/api/bloodsugar/get_by_single_date?date=${data.date}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Token ${token}`,
+          },
+        },
+      );
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      showAlert('Error', 'Error filtering your record');
+      console.log(error.response.data);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  },
+);
+
 const initialState = {
   isLoading: false,
   bloodSugars: [],
@@ -124,6 +149,20 @@ export const bloodSugarSlice = createSlice({
         state.error = null;
       })
       .addCase(getBloodSugarList.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+        state.bloodSugars = [];
+      })
+      .addCase(filterBloodSugarListByDate.pending, state => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(filterBloodSugarListByDate.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.bloodSugars = action.payload;
+        state.error = null;
+      })
+      .addCase(filterBloodSugarListByDate.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
         state.bloodSugars = [];

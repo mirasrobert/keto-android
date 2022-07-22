@@ -2,10 +2,14 @@ import React, {useState, useEffect} from 'react';
 import colors from '../../../Colors';
 import {StyleSheet, View, SafeAreaView, FlatList, Text} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
+import moment from 'moment';
 
 // Global Redux State
 import {useSelector, useDispatch} from 'react-redux';
-import {getBloodPressureList} from '../../../features/tabs/bloodPressureSlice';
+import {
+  getBloodPressureList,
+  filterBloodPressureListByDate,
+} from '../../../features/tabs/bloodPressureSlice';
 
 import Container from '../../elements/Container';
 import Header from '../../elements/Header';
@@ -26,12 +30,12 @@ const BloodPressureScreen = () => {
 
   // Dropdown Select
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState('All');
   const [items, setItems] = useState([
     {label: 'All', value: 'All'},
     {label: 'Today', value: 'Today'},
+    {label: 'Yesterday', value: 'Yesterday'},
   ]);
-
+  const [value, setValue] = useState(items[0].value);
   return (
     <Container>
       <Header title="Blood Pressure" />
@@ -39,6 +43,22 @@ const BloodPressureScreen = () => {
         <SimpleButton screen="AddBloodPressureForm" buttonText="Add Record" />
         <View>
           <DropDownPicker
+            onSelectItem={item => {
+              // Get today date by moment
+              const today = moment().format('YYYY-MM-DD');
+              // Get yesterdate date by mement
+              const yesterday = moment()
+                .subtract(1, 'days')
+                .format('YYYY-MM-DD');
+
+              if (item.value === 'Today') {
+                dispatch(filterBloodPressureListByDate({date: today}));
+              } else if (item.value === 'Yesterday') {
+                dispatch(filterBloodPressureListByDate({date: yesterday}));
+              } else {
+                dispatch(getBloodPressureList());
+              }
+            }}
             open={open}
             value={value}
             items={items}

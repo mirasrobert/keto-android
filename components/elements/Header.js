@@ -5,7 +5,7 @@ import {Menu} from 'react-native-paper';
 import {useDispatch} from 'react-redux';
 import {logoutUser} from '../../features/auth/authSlice';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {showAlertDialog} from '../helpers/helpers';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const Header = ({title}) => {
   const dispatch = useDispatch();
@@ -43,12 +43,17 @@ const Header = ({title}) => {
             />
           }>
           <Menu.Item
+            icon={() => <MaterialIcons name="settings" size={20} />}
             onPress={() => {
               alert('Settings Pressed');
             }}
             title="Settings"
           />
-          <Menu.Item onPress={handleLogout} title="Logout" />
+          <Menu.Item
+            icon={() => <MaterialCommunityIcons name="logout" size={20} />}
+            onPress={handleLogout}
+            title="Logout"
+          />
         </Menu>
       </View>
     </View>
