@@ -77,26 +77,22 @@ export const editBloodSugar = createAsyncThunk(
 // Delete Blood Sugar Record
 export const deleteBloodSugar = createAsyncThunk(
   'bloodSugar/deleteBloodSugar',
-  async (id, thunkAPI) => {
+  async (data, thunkAPI) => {
     try {
       const token = await AsyncStorage.getItem('@token');
-      const response = await api.delete(
-        `/api/bloodsugar/${id}/delete/`,
-        {},
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Token ${token}`,
-          },
+      const response = await api.delete(`/api/bloodsugar/${data.id}/delete/`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Token ${token}`,
         },
-      );
+      });
 
       showAlert('Success', 'Blood Sugar Record Removed');
 
       return response.data;
     } catch (error) {
       showAlert('Error', 'Error removing your record');
-      console.log(error);
+      console.log(error.response.data);
       return thunkAPI.rejectWithValue(error.response.data);
     }
   },

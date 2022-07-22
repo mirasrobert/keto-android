@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import colors from '../../Colors';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View, Alert} from 'react-native';
 import {Menu} from 'react-native-paper';
 import {useDispatch} from 'react-redux';
 import {logoutUser} from '../../features/auth/authSlice';
@@ -14,9 +14,14 @@ const Header = ({title}) => {
   const closeMenu = () => setVisible(false);
 
   const handleLogout = () => {
-    showAlertDialog('Logout', 'Are you sure you want to logout?', () => {
-      dispatch(logoutUser());
-    });
+    Alert.alert('Exit', 'Are you sure you want to logout?', [
+      {
+        text: 'Cancel',
+        onPress: () => {},
+        style: 'cancel',
+      },
+      {text: 'Yes', onPress: () => dispatch(logoutUser())},
+    ]);
   };
 
   return (

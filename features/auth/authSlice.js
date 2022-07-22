@@ -105,12 +105,42 @@ export const verifyUser = createAsyncThunk(
       const title = success ? 'Verification Successful' : 'Verification Failed';
 
       // Show Message
-      showAlert(title, message);
+      showAlert(title, 'Email verified successfully');
 
       return response.data;
     } catch (error) {
       console.log(error);
       return thunkAPI.rejectWithValue(error.response.data);
+    }
+  },
+);
+
+// Resend Code
+export const resendOTP = createAsyncThunk(
+  'auth/resendOTP',
+  async (formData, thunkAPI) => {
+    try {
+      const token = await AsyncStorage.getItem('@token');
+      const response = await api.post('/api/auth/resend_otp', formData, {
+        headers: {
+          Authorization: `Token ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const {success, message} = response.data;
+
+      const title = 'Verification Code';
+
+      // Show Message
+      if (success) {
+        showAlert(title, 'Code has been resent to your email');
+      }
+
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      return showAlert('Verification Code', 'Failed to resend code');
     }
   },
 );

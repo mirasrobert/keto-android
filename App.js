@@ -15,6 +15,7 @@ import AddWeightForm from './components/forms/AddWeightForm';
 import AddMedicationForm from './components/forms/AddMedicationForm';
 
 import EditBloodSugarForm from './components/forms/EditBloodSugarForm';
+import EditBloodPressureForm from './components/forms/EditBloodPressureForm';
 
 // Components
 import Loader from './components/elements/Loader';
@@ -74,6 +75,11 @@ const RootNavigation = () => {
                   name="EditBloodSugarForm"
                   component={EditBloodSugarForm}
                   options={{title: 'Blood Sugar'}}
+                />
+                <Stack.Screen
+                  name="EditBloodPressureForm"
+                  component={EditBloodPressureForm}
+                  options={{title: 'Blood Pressure'}}
                 />
               </>
             ) : (

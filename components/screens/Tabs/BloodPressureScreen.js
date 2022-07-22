@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import colors from '../../../Colors';
-import {StyleSheet, View, SafeAreaView, FlatList} from 'react-native';
+import {StyleSheet, View, SafeAreaView, FlatList, Text} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 
 // Global Redux State
@@ -56,6 +56,11 @@ const BloodPressureScreen = () => {
         <View style={styles.cardsrecordScrollView}>
           {bloodSugarIsLoading ? (
             <Loader />
+          ) : DATA.length == 0 ? (
+            <Text
+              style={{textAlign: 'center', color: colors.dark, opacity: 0.6}}>
+              There are no data to shown.
+            </Text>
           ) : (
             <FlatList
               data={DATA}

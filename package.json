@@ -21,6 +21,7 @@
     "moment": "^2.29.4",
     "moment-timezone": "^0.5.34",
     "react": "17.0.2",
+    "react-countdown-hook": "^1.1.1",
     "react-native": "0.68.2",
     "react-native-dropdown-picker": "^5.4.2",
     "react-native-gesture-handler": "^2.5.0",

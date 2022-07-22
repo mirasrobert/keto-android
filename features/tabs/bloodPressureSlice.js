@@ -77,12 +77,11 @@ export const editBloodPressure = createAsyncThunk(
 // Delete Blood Pressure Record
 export const deleteBloodPressure = createAsyncThunk(
   'bloodPressure/deleteBloodPressure',
-  async (id, thunkAPI) => {
+  async (data, thunkAPI) => {
     try {
       const token = await AsyncStorage.getItem('@token');
       const response = await api.delete(
-        `/api/bloodpressure/${id}/delete/`,
-        {},
+        `/api/bloodpressure/${data.id}/delete/`,
         {
           headers: {
             'Content-Type': 'application/json',

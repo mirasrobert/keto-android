@@ -4,14 +4,13 @@ import {StyleSheet, Text, View} from 'react-native';
 import {Button, TextInput} from 'react-native-paper';
 
 import {useSelector, useDispatch} from 'react-redux';
-import {verifyUser} from '../../features/auth/authSlice';
+import {verifyUser, resendOTP} from '../../features/auth/authSlice';
 import Loader from '../elements/Loader';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Menu} from 'react-native-paper';
 import {logoutUser} from '../../features/auth/authSlice';
-
-import {useCountdown} from '../helpers/helpers';
+import useCountDown from 'react-countdown-hook';
 
 const VerifyScreen = () => {
   const dispatch = useDispatch();
@@ -42,51 +41,18 @@ const VerifyScreen = () => {
     );
   };
 
+  const [timeLeft, actions] = useCountDown(60000, 1000);
+
   const handleLogout = () => {
     dispatch(logoutUser());
   };
 
   // Timer
 
-  const endTime = new Date().getTime() + 60000 * 1; // 1 minutes
-  const [timeLeft, setEndTime] = useCountdown(endTime);
-
-  const minutes = Math.floor(timeLeft / 60000) % 60;
-  const seconds = Math.floor(timeLeft / 1000) % 60;
-
-  const [isTimerStarted, setIsTimerStarted] = useState(false);
-
-  const stopTimer = () => {
-    setEndTime(0);
-  };
-
-  const resetTimer = () => {
-    setEndTime(endTime);
-  };
-
-  const showTimer = () => {
-    setIsTimerStarted(true);
-  };
-
-  useEffect(() => {
-    setIsTimerStarted(false);
-    stopTimer();
-
-    return () => {
-      resetTimer();
-      stopTimer();
-    };
-  }, []);
-
   const handleResendOTP = () => {
-    alert('OTP has been resent');
-    showTimer();
-    resetTimer();
+    actions.start();
 
-    setTimeout(() => {
-      setIsTimerStarted(false);
-      stopTimer();
-    }, 59000);
+    dispatch(resendOTP());
   };
 
   if (isLoading) {
@@ -138,7 +104,7 @@ const VerifyScreen = () => {
           <Text style={styles.resend} numberOfLines={2}>
             Didn't receive the code?
           </Text>
-          {!isTimerStarted ? (
+          {timeLeft == 0 ? (
             <Text
               onPress={handleResendOTP}
               style={{color: colors.blue, textAlign: 'center'}}
@@ -149,7 +115,8 @@ const VerifyScreen = () => {
             <Text
               style={{color: colors.blue, textAlign: 'center'}}
               numberOfLines={2}>
-              Please wait {`${minutes}:${seconds}`} to resend code again
+              Please wait for {(timeLeft / 1000).toFixed(2)} seconds to resend
+              code again
             </Text>
           )}
         </View>
@@ -162,14 +129,6 @@ const VerifyScreen = () => {
           contentStyle={styles.submitButton}>
           Verify Account
         </Button>
-        {/* <Button
-          color={colors.primary}
-          onPress={stopTimer}
-          mode="contained"
-          style={styles.mdRounded}
-          contentStyle={styles.submitButton}>
-          STOP TIMER
-        </Button> */}
       </View>
     </View>
   );

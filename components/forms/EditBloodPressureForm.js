@@ -7,11 +7,13 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import moment from 'moment-timezone';
 
 import {useDispatch} from 'react-redux';
-import {addBloodPressure} from '../../features/tabs/bloodPressureSlice';
+import {editBloodPressure} from '../../features/tabs/bloodPressureSlice';
 
 import {showAlert} from '../helpers/helpers';
 
-const AddBloodPressureForm = () => {
+const EditBloodPressureForm = ({route, navigation}) => {
+  const {data} = route.params; // Data
+
   const dispatch = useDispatch();
 
   // Dropdown Select
@@ -24,21 +26,21 @@ const AddBloodPressureForm = () => {
   const [value, setValue] = useState(items[0].value);
 
   const [formData, setFormData] = useState({
-    systolic_pressure: '',
-    diastolic_pressure: '',
-    notes: '',
+    systolic_pressure: data.systolic_pressure || '',
+    diastolic_pressure: data.diastolic_pressure || '',
+    notes: data.notes || '',
   });
 
-  const dateToday = moment().tz('Asia/Manila').format('YYYY-MM-DD HH:mm');
-  const timeToday = moment().tz('Asia/Manila').format('hh:mm A');
-
-  const [date, setDate] = useState(moment(dateToday).format('YYYY-MM-DD'));
-  const [time, setTime] = useState(timeToday);
+  const dataTime = moment(data.time, 'hh:mm:ss').format('LT');
+  const [date, setDate] = useState(moment(data.date).format('YYYY-MM-DD'));
+  const [time, setTime] = useState(dataTime);
   const [covert12HRTo24HR, setCovert12HRTo24HR] = useState(
-    moment(timeToday, 'hh:mm A').tz('Asia/Manila').format('HH:mm'),
+    moment(dataTime, 'hh:mm A').tz('Asia/Manila').format('HH:mm'),
   );
 
-  const [dateTime, setDateTime] = useState(moment().toDate());
+  const [dateTime, setDateTime] = useState(
+    moment(`${data.date} ${data.time}`).toDate(),
+  );
 
   const [show, setShow] = useState(false);
   const [mode, setMode] = useState('date');
@@ -92,13 +94,16 @@ const AddBloodPressureForm = () => {
 
     // Add Blood Sugar Record
     dispatch(
-      addBloodPressure({
-        systolic_pressure: systolic_pressure.trim(),
-        diastolic_pressure: diastolic_pressure.trim(),
-        arm: value,
-        notes: notes.trim(),
-        date: date,
-        time: timeToSaved,
+      editBloodPressure({
+        id: data.id,
+        form: {
+          systolic_pressure: systolic_pressure.trim(),
+          diastolic_pressure: diastolic_pressure.trim(),
+          arm: value,
+          notes: notes.trim(),
+          date: date,
+          time: timeToSaved,
+        },
       }),
     );
 
@@ -109,20 +114,18 @@ const AddBloodPressureForm = () => {
       notes: '',
     });
 
-    // Reset Date
-    setDate(moment().format('YYYY-MM-DD'));
-    setTime(moment().format('hh:mm A'));
-    setCovert12HRTo24HR(moment().format('HH:mm'));
+    // Go Back
+    navigation.goBack();
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Add Blood Pressure</Text>
+      <Text style={styles.title}>Edit Blood Pressure</Text>
       <View style={styles.formWrapper}>
         <TextInput
           keyboardType="numeric"
           mode="outlined"
-          label="Systolic Pressure"
+          label="Sugar Concentration"
           style={styles.inputStyle}
           onChangeText={e =>
             setFormData({
@@ -210,7 +213,7 @@ const AddBloodPressureForm = () => {
           mode="contained"
           style={styles.mdRounded}
           contentStyle={styles.submitButton}>
-          Add Record
+          Update Record
         </Button>
       </View>
     </View>
@@ -263,4 +266,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddBloodPressureForm;
+export default EditBloodPressureForm;

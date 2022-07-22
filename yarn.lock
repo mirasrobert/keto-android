@@ -5693,6 +5693,11 @@
   "resolved" "https://registry.npmjs.org/range-parser/-/range-parser-1.2.1.tgz"
   "version" "1.2.1"
 
+"react-countdown-hook@^1.1.1":
+  "integrity" "sha512-+/vH6zK2H0yM9dPWJOa3hnLsBWWjwwi/6KOXDBc6F65lrc8vmuMozjTOlLhG4AtyyOTJAd2bvJhlph8IPqrXxg=="
+  "resolved" "https://registry.npmjs.org/react-countdown-hook/-/react-countdown-hook-1.1.1.tgz"
+  "version" "1.1.1"
+
 "react-devtools-core@^4.23.0":
   "integrity" "sha512-OFB1cp8bsh5Kc6oOJ3ZzH++zMBtydwD53yBYa50FKEGyOOdgdbJ4VsCsZhN/6F5T4gJfrZraU6EKda8P+tMLtg=="
   "resolved" "https://registry.npmjs.org/react-devtools-core/-/react-devtools-core-4.24.7.tgz"

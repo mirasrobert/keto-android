@@ -1,19 +1,45 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import colors from '../../Colors';
-import {View, StyleSheet, Text} from 'react-native';
+import {View, StyleSheet, Text, Alert} from 'react-native';
 import {Card, Paragraph} from 'react-native-paper';
 import Badge from '../elements/Badge';
 import moment from 'moment-timezone';
 import {Menu} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
+import {useDispatch} from 'react-redux';
+import {deleteBloodSugar} from '../../features/tabs/bloodSugarSlice';
 
 const CardBloodSugar = ({item}) => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   // Menu
   const [visible, setVisible] = useState(false);
   const openMenu = () => setVisible(true);
   const closeMenu = () => setVisible(false);
+
+  const [borderColorTop, setBorderColorTop] = useState(colors.pink);
+  const [badgeTxt, setBadgeTxt] = useState('Normal');
+  const [badgeColor, setBadgeColor] = useState(colors.green);
+
+  useEffect(() => {
+    if (parseFloat(item.sugar_concentration) < 3.9) {
+      // Low
+      setBadgeTxt('Low');
+      setBadgeColor(colors.yellow);
+      setBorderColorTop(colors.yellow);
+    } else if (parseFloat(item.sugar_concentration) < 5.6) {
+      // Normal
+      setBadgeTxt('Normal');
+      setBadgeColor(colors.blue);
+      setBorderColorTop(colors.green);
+    } else {
+      // High
+      setBadgeTxt('High');
+      setBadgeColor(colors.orange);
+      setBorderColorTop(colors.pink);
+    }
+  }, []);
 
   return (
     <View style={styles.cardContainer}>
@@ -24,7 +50,7 @@ const CardBloodSugar = ({item}) => {
           <Card
             style={{
               backgroundColor: 'white',
-              borderTopColor: colors.pink,
+              borderTopColor: borderColorTop,
               borderTopWidth: 1,
             }}
             elevation={1}
@@ -41,8 +67,8 @@ const CardBloodSugar = ({item}) => {
                   {item.notes && item.notes.length > 0 ? item.notes : ''}
                 </Paragraph>
                 <Badge
-                  text="Normal"
-                  bgColor={colors.blue}
+                  text={badgeTxt}
+                  bgColor={badgeColor}
                   textColor={colors.white}
                 />
               </View>
@@ -63,7 +89,23 @@ const CardBloodSugar = ({item}) => {
         />
         <Menu.Item
           onPress={() => {
-            alert('Delete Pressed');
+            Alert.alert(
+              'Delete',
+              'Are you sure you want to remove this record?',
+              [
+                {
+                  text: 'Cancel',
+                  onPress: () => {
+                    closeMenu();
+                  },
+                  style: 'cancel',
+                },
+                {
+                  text: 'Yes',
+                  onPress: () => dispatch(deleteBloodSugar({id: item.id})),
+                },
+              ],
+            );
           }}
           title="Delete"
         />
